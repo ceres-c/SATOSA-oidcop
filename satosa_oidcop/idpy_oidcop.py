@@ -228,7 +228,7 @@ class OidcOpUtils(object):
             logger.error(err)
             response = JsonResponse(
                 {"error": "unauthorized_client", "error_description": str(err)},
-                status="403",
+                status="403 ",
             )
             return self.send_response(response)
         return parse_req
@@ -265,7 +265,7 @@ class OidcOpUtils(object):
                     "error": "invalid_request",
                     "error_description": "request cannot be processed",
                 },
-                status="403",
+                status="403 ",
             )
             return self.send_response(response)
 
@@ -276,7 +276,7 @@ class OidcOpUtils(object):
         getattr(logger, level)(logline)
 
     def handle_error(
-            self, msg: str = None, excp: Exception = None, status: str = "403"
+            self, msg: str = None, excp: Exception = None, status: str = "403 "
     ):  # pragma: no cover
         _msg = f'Something went wrong ... {excp or ""}'
         msg = msg or _msg
@@ -380,7 +380,7 @@ class OidcOpEndpoints(OidcOpUtils):
                     "error": "invalid_request",
                     "error_description": "Not owner of token",
                 },
-                status="403",
+                status="403 ",
             )
             return self.send_response(_response)
 
@@ -397,7 +397,7 @@ class OidcOpEndpoints(OidcOpUtils):
         if isinstance(proc_req, JsonResponse):  # pragma: no cover
             return self.send_response(proc_req)
         elif isinstance(proc_req, TokenErrorResponse):
-            return self.send_response(JsonResponse(proc_req.to_dict(), status="403"))
+            return self.send_response(JsonResponse(proc_req.to_dict(), status="403 "))
 
         # TODO: remove when migrate to idpy-oidc
         # PATCH https://github.com/UniversitaDellaCalabria/SATOSA-oidcop/issues/29
@@ -433,7 +433,7 @@ class OidcOpEndpoints(OidcOpUtils):
                 return self.send_response(
                     JsonResponse(
                         {"error": "invalid_client", "error_description": "<client not found>"},
-                        status="403",
+                        status="403 ",
                     )
                 )
         else:
@@ -443,7 +443,7 @@ class OidcOpEndpoints(OidcOpUtils):
             return self.send_response(
                 JsonResponse(
                     {"error": "invalid_token", "error_description": "<no loadable session>"},
-                    status="403",
+                    status="403 ",
                 )
             )
 
@@ -455,7 +455,7 @@ class OidcOpEndpoints(OidcOpUtils):
             return self.send_response(
                 JsonResponse(
                     {"error": "invalid_token", "error_description": "<TOKEN>"},
-                    status="403",
+                    status="403 ",
                 )
             )
 
@@ -475,7 +475,7 @@ class OidcOpEndpoints(OidcOpUtils):
                     proc_req["response_args"]
                     if "response_args" in proc_req
                     else proc_req.to_dict(),
-                    status="403",
+                    status="403 ",
                 )
             )
 
@@ -768,13 +768,13 @@ class OidcOpFrontend(FrontendModule, OidcOpEndpoints):
             return self.handle_error(excp=excp)
 
         if isinstance(_args, ResponseMessage) and "error" in _args:  # pragma: no cover
-            return self.send_response(JsonResponse(_args, status="403"))
+            return self.send_response(JsonResponse(_args, status="403 "))
         elif isinstance(
                 _args.get("response_args"), AuthorizationErrorResponse
         ):  # pragma: no cover
             rargs = _args.get("response_args")
             logger.error(rargs)
-            response = JsonResponse(rargs.to_json(), status="403")
+            response = JsonResponse(rargs.to_json(), status="403 ")
             return self.send_response(response)
 
         info = endpoint.do_response(request=parse_req, **proc_req)
