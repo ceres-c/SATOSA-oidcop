@@ -13,6 +13,7 @@ from idpyoidc.message.oidc import AccessTokenRequest
 from idpyoidc.message.oidc import AuthnToken
 from idpyoidc.message.oidc import AuthorizationErrorResponse
 from idpyoidc.message.oidc import AuthorizationRequest
+from idpyoidc.message.oidc import AuthorizationResponse
 from idpyoidc.message.oidc import TokenErrorResponse
 from idpyoidc.server.authn_event import create_authn_event
 from idpyoidc.server.exception import ClientAuthenticationError
@@ -783,7 +784,7 @@ class OidcOpFrontend(FrontendModule, OidcOpEndpoints):
             "response_placement", endpoint.response_placement
         )
         if _response_placement == "url":
-            data = _args["response_args"].to_dict()
+            data = _args.get("response_args", AuthorizationResponse()).to_dict()
             url_components = urlparse(info_response)
             original_params = parse_qs(url_components.query)
             merged_params = {**original_params, **data}
